@@ -44,7 +44,7 @@ class SondeData(Sonde):
     TypeError
         If data is not provided while initializing the instance, a TypeError will be raised
     """
-    data: Any
+    data: Any = _no_default
 
     def __post_init__(self):
         if self.data is _no_default:
