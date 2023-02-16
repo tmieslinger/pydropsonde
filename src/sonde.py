@@ -4,7 +4,7 @@ import numpy as np
 
 _no_default = object()
 
-@dataclass(order=True)
+@dataclass(order=True,frozen=True)
 class Sonde:    
     """Class identifying a sonde and containing its metadata
 
@@ -27,10 +27,12 @@ class Sonde:
     # add more attributes of other optional metadata
 
     def __post_init__(self):
+        """The `sort_index` attribute is only applicable when `launch_time` is available.
+        """
         if self.launch_time is not None:
-            self.sort_index = self.launch_time
+            object.__setattr__(self, 'sort_index', self.launch_time)
 
-@dataclass
+@dataclass(frozen=True)
 class SondeData(Sonde):
     """Class containing data of a sonde
 
