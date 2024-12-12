@@ -249,7 +249,7 @@ def create_and_populate_flight_object(
 
 def create_and_populate_circle_object(
     gridded: Gridded, config: configparser.ConfigParser
-) -> dict:
+) -> dict[Circle]:
     """
     Create circle objects for further analysis
     """
