@@ -249,7 +249,7 @@ def create_and_populate_flight_object(
 
 def create_and_populate_circle_object(
     gridded: Gridded, config: configparser.ConfigParser
-    ) -> dict[Circle]:
+) -> dict[Circle]:
     """
     create circle objects for further analysis
     """
@@ -259,7 +259,8 @@ def create_and_populate_circle_object(
     for segment in gridded.segments:
         try:
             circle_ds = gridded.l3_ds.where(
-                (gridded.l3_ds["launch_time"] > np.datetime64(segment["start"])) & (gridded.l3_ds["launch_time"] < np.datetime64(segment["end"])),
+                (gridded.l3_ds["launch_time"] > np.datetime64(segment["start"]))
+                & (gridded.l3_ds["launch_time"] < np.datetime64(segment["end"])),
                 drop=True,
             )
         except ValueError:
@@ -275,6 +276,7 @@ def create_and_populate_circle_object(
             circles[segment["segment_id"]] = circle
 
     return circles
+
 
 def iterate_Sonde_method_over_dict_of_Sondes_objects(
     obj: dict, functions: list, config: configparser.ConfigParser
