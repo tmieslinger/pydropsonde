@@ -4,25 +4,31 @@ Data
 
 This section outlines procedures for how to go about doing the quality control, the processing and the generation of data products.
 
-Data Directory Structure
-------------------------
+Data Products
+-------------
 
-Usually dropsonde data has a ``platform`` from which it was meassured and a ``flight_id`` from the exact flight it was taken from. After the processing each flight will have data on different levels of processing. ``pydropsonde`` uses the following levels.
+``pydropsonde`` splits the processing into several steps resulting in four data products.
+Below, the processing and (intermediate) data products are described in short in tabular form with links to detailed subpages.
 
 .. list-table::
-   :widths: 50 50
+   :widths: 20 20 60
    :header-rows: 1
 
-   * - Level
+   * - Data Product
+     - Data Files
      - Description
-   * - Level_0
-     - raw files from the AVAPS software (A-files, D-files, ...). Some files contain auxiliary data for a measurement sequence (usually a flight) and others are per sonde.
-   * - Level_1
-     - ASPEN-processed netCDF files per sonde. First QC applied.
+   * - :doc:`Level_0 <level0>`
+     - One file per sonde
+     - Raw files from the AVAPS software (A-files, D-files, ...)
+   * - :doc:`Level_1 <level1>`
+     - One file per sonde
+     - ASPEN-processed netCDF files including a first QC
    * - :doc:`Level_2 <level2>`
-     - Sondes that passed additional QC tests. Still one file per sonde. All soundings with no usable data are excluded
+     - One file per sonde
+     - Sonde profiles that passed additional QC tests
    * - :doc:`Level_3 <level3>`
-     - One dataset (file) containing all Level_2 soundings gridded on a uniform, vertical grid, with some derived variables
+     - one single file
+     - One dataset (file) containing all Level_2 soundings gridded on a uniform vertical grid and including some derived variables
    * - Level_4
      - one single file
      - Circle products from all circles flown during a measurement sequence, e.g. divergence
