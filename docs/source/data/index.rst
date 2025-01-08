@@ -1,8 +1,10 @@
 Data
 ====
 
+This section provides details on the processing steps, the resulting data products (levels), and the included quality control.
+When applying ``pydropsonde`` it is important to understand not only the different Data Products, but also where single products are stored.
+The latter is described in the section Data Directory Structure.
 
-This section outlines procedures for how to go about doing the quality control, the processing and the generation of data products.
 
 Data Products
 -------------
