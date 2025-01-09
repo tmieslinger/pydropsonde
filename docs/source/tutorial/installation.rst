@@ -24,4 +24,3 @@ Currently, there are two ways to install the package.
        conda env create -f environment.yaml
 
    This will install ``pydropsonde`` in development mode.
-
