@@ -84,15 +84,20 @@ with the respective config file entry:
         path_to_flight_ids = ./
         path_to_l0_files = {flight_id}/Level_0
 
-.. toctree::
-    :caption: Level Description
 In the course of the processing further data products or levels will be added at the respective places.
 In the first case Level_1 files would be saved to a single folder at ``platform / Level_1 / {flight_id} / netCDF files``.
 In the second case many Level_1 folders would be created following the pattern ``{flight_id} / Level_1 / netCDF files``.
 
-    level2
-    level3
 Level_2 works similar to Level_1 concerning the data directory structure.
 Up to this processing level each sonde profile is saved in a separate file.
 Level_3 on the other side is different in the sense that all profile data is vertically interpolated (see details above) and saved to a single file in the top directory specified in the mandatory section of the config file.
 Level_4 is likewise a single file stored next to Level_3.
+
+
+.. toctree::
+    :hidden:
+
+    level0
+    level1
+    level2
+    level3
