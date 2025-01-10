@@ -1,7 +1,7 @@
 Running pydropsonde
 ===================
 
-To run ``pydropsonde`` on a set of sonde profiles, you first need to create a respective configuration file (see :doc:`Config Files <configs>`).
+To run ``pydropsonde`` on a set of sonde profiles, you first need to create a configuration file (see :doc:`Config Files <configs>`).
 Further, you can provide the path to the config file through the ``-c`` option.
 By default, ``pydropsonde`` would search for `dropsonde.cfg` in the current directory.
 

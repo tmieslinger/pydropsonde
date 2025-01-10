@@ -27,7 +27,7 @@ Below, the processing and (intermediate) data products are described in short in
      - ASPEN-processed netCDF files including a first QC
    * - :doc:`Level_2 <level2>`
      - One file per sonde
-     - Sonde profiles that passed additional QC tests
+     - Sonde profiles with additional QC flags
    * - :doc:`Level_3 <level3>`
      - one single file
      - One dataset (file) containing all Level_2 soundings gridded on a uniform vertical grid and including some derived variables
@@ -43,9 +43,9 @@ Data Directory Structure
 
 Before processing you need to store your dropsonde profile data in a coherent way and communicate that to the processing software via the config file.
 Most commonly, a sonde profile is associated with a ``platform`` from which it was dropped and a ``flight_id`` from the respective measurement flight.
-The AVAPS software is a standard tool for conducting dropsonde measurements in atmospheric science and the ``pydropsonde`` package builds on the AVAPS generated raw files (Level_0) and the ASPEN software designed by NCAR for applying a first quality control and changing the file format (Level_1). The resultign Data Levels are described in detail below.
+The AVAPS software is a standard tool for conducting dropsonde measurements in atmospheric science and the ``pydropsonde`` package builds on the AVAPS generated raw files (Level_0). Further, the ASPEN software designed by NCAR is used to apply a first quality control and change the file format (Level_1). The resultign Data Levels are described in detail below.
 
-We suggest you to use as a default directory structure which fits the default output of the AVAPS and ASPEN software.
+We suggest to use a default directory structure which fits the default output of the AVAPS and ASPEN software.
 At the end of a research flight with dropsonde measurements the AVAPS software saves individual sonde profile data in single files and adds several metadata files related to the whole flight.
 A possible data directory structure would therefore be:
 
@@ -66,7 +66,7 @@ This is the assumed default structure and translates into the following statemen
         path_to_flight_ids = {platform}/Level_0
         path_to_l0_files = {platform}/Level_0/{flight_id}
 
-However, you are free in defining your favourite data strucutre that fits your use case and you could likewise save the data in another structure, e.g.
+However, you are free to define your favourite data strucutre that fits your use case and you could likewise save the data in another structure, e.g.
 
 
 .. code-block:: ini
@@ -92,7 +92,7 @@ In the second case many Level_1 folders would be created following the pattern `
 
 Level_2 works similar to Level_1 concerning the data directory structure.
 Up to this processing level each sonde profile is saved in a separate file.
-Level_3 on the other side is different in the sense that all profile data is vertically interpolated (see details above) and saved to a single file in the top directory specified in the mandatory section of the config file.
+Level_3 is different in the sense that all profile data is vertically interpolated (see details above) and saved to a single file in the top directory specified in the mandatory section of the config file.
 Level_4 is likewise a single file stored next to Level_3.
 
 

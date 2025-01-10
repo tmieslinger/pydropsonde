@@ -1,9 +1,9 @@
 Level 0
 =======
 
-Level_0 refers to the raw data files saved by the `AVAPS Dropsonde System <https://www.eol.ucar.edu/observing_facilities/avaps-dropsonde-system>`_ in it's default configuration.
+Level_0 refers to the raw data files saved by the `AVAPS Dropsonde System <https://www.eol.ucar.edu/observing_facilities/avaps-dropsonde-system>`_ in its default configuration.
 For each dropped sonde that system stores the data in different formats, partly with overlapping information.
-In addition to the singel profile files, the system saves metadata related to a measurement sequence, typically one flight, as defined by the start and closing of the AVAPS software.
+In addition to the single profile files, the system saves metadata related to a measurement sequence, typically one flight, as defined by the start and closing of the AVAPS software.
 
 An overview of typical files stored at Level_0 is shown in `George et al., 2021 <https://essd.copernicus.org/articles/13/5253/2021/essd-13-5253-2021.html>`_ and copied below:
 
@@ -33,3 +33,7 @@ An overview of typical files stored at Level_0 is shown in `George et al., 2021 
      - TXT file of GPS data: GPGGA (system fix data) and GPRMC (minimum specific GPS/Transit data)
    * - 3_SpecAnlyzr files
      - TXT file of logs of spectral analyzer
+
+``pydropsonde`` uses the `D files` with the actual sonde profile data in the further processing.
+Metadata information from the `A files`, e.g. a successful launch detect, is added within the processing.
+In principle, the processing can run without `A files`, but obviously does not have metadata in that case.

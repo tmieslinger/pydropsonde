@@ -1,8 +1,9 @@
 Config Files
 ============
 
-Each config file has a mandatory and an optional section. The below description shows exemplarily the general structure and main features.
-However, you can find an example for a valid config file ``dropsonde.cfg`` that works with the example data ``example_data/`` which is all stored within the `GitHub repository <https://github.com/atmdrops/pydropsonde>`_ that also hosts the pages of the documentation that you are currently reading.
+A valid config file states at least the path to the dropsonde data in the mandatory section.
+The below description shows exemplarily the general structure and lists further optional statements.
+For illustration, you can find an example for a valid config file ``dropsonde.cfg`` that works with the example data ``example_data/`` in the `pydropsonde GitHub repository <https://github.com/atmdrops/pydropsonde>`_ that also hosts the pages of the documentation that you are currently reading.
 
 
 .. _mandatory:
