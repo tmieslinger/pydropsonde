@@ -505,13 +505,13 @@ class QualityControl:
 
     def add_sonde_flag_to_ds(self, ds, qc_name):
         if all(self.qc_flags.values()):
-            qc_val = 1
+            qc_val = 0
         elif any(self.qc_flags.values()) and (
             self.qc_flags.get(f"{self.alt_dim}_values", True)
         ):
             qc_val = 2
         else:
-            qc_val = 0
+            qc_val = 1
 
         ds = ds.assign({qc_name: qc_val})
         ds[qc_name].attrs.update(
@@ -519,8 +519,8 @@ class QualityControl:
                 standard_name="aggregate_quality_flag",
                 long_name="aggregated quality flag for sonde",
                 flag_values="0 1 2",
-                flag_meaning="BAD GOOD UGLY",
-                description="if not 1 some quality control has not been passed. Handle with care.",
+                flag_meaning="GOOD BAD UGLY",
+                description="if not 0 some quality control has not been passed. Handle with care.",
             )
         )
         ds = hx.add_ancillary_var(ds, "sonde_id", qc_name)
