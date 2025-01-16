@@ -113,12 +113,12 @@ def test_add_variable_flag_to_ds(qc_vars, varname, output):
 @pytest.mark.parametrize(
     "variables,output",
     [
-        (["p"], 1),
-        (["q", "p"], 2),
-        (["q"], 0),
-        (["rh"], 2),
-        (["rh", "q"], 2),
-        (["rh", "p"], 2),
+        (["p"], 0),  # GOOD
+        (["q", "p"], 2),  # UGLY
+        (["q"], 1),  # BAD
+        (["rh"], 2),  # UGLY
+        (["rh", "q"], 2),  # UGLY
+        (["rh", "p"], 2),  # UGLY
     ],
 )
 def test_sonde_qc(qc_vars, variables, output):
