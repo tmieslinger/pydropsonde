@@ -390,13 +390,13 @@ class QualityControl:
     def add_alt_near_gpsalt_to_ds(self, ds):
         if self.qc_flags.get("alt_near_gpsalt") is not None:
             ds = ds.assign(
-                {"alt_near_gpsalt": np.byte(self.qc_flags.get("alt_near_gpsalt"))}
+                {"alt_near_gpsalt": np.byte(not self.qc_flags.get("alt_near_gpsalt"))}
             )
             ds["alt_near_gpsalt"].attrs.update(
                 dict(
                     long_name="maximal difference between alt and gpsalt",
                     flag_values="0 1 ",
-                    flag_meaning="BAD GOOD",
+                    flag_meaning="GOOD BAD",
                 )
             )
 
