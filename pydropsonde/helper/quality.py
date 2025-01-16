@@ -469,7 +469,7 @@ class QualityControl:
         ds = ds.assign(
             {
                 f"{self.alt_dim}_values": np.byte(
-                    self.qc_flags.get(f"{self.alt_dim}_values", True)
+                    (not self.qc_flags.get(f"{self.alt_dim}_values", False))
                 )
             }
         )
@@ -477,7 +477,7 @@ class QualityControl:
             dict(
                 long_name=f"Values for {self.alt_dim} are present in raw data",
                 flag_values="0 1 ",
-                flag_meaning="BAD GOOD",
+                flag_meaning="GOOD BAD",
             )
         )
 
