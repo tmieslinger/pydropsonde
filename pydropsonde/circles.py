@@ -151,11 +151,16 @@ class Circle:
         a = np.stack([np.ones_like(x), x, y], axis=-1)
 
         invalid = np.isnan(u) | np.isnan(x) | np.isnan(y)
+
+        under_constraint = np.sum(~invalid, axis=-1) < 6
         u_cal = np.where(invalid, 0, u)
         a[invalid] = 0
 
         a_inv = np.linalg.pinv(a)
         intercept, dux, duy = np.einsum("...rm,...m->r...", a_inv, u_cal)
+        intercept[under_constraint] = np.nan
+        dux[under_constraint] = np.nan
+        duy[under_constraint] = np.nan
 
         return intercept, dux, duy
 
@@ -328,7 +333,9 @@ class Circle:
             "long_name": "Area-averaged atmospheric pressure velocity (omega)",
             "units": "hPa hr-1",
         }
-        self.circle_ds = ds.assign(dict(omega=(ds.div.dims, omega.values, omega_attrs)))
+        self.circle_ds = ds.assign(
+            dict(omega=(ds.div.dims, omega.broadcast_like(ds.div).values, omega_attrs))
+        )
         return self
 
     def add_wvel(self):
@@ -357,5 +364,7 @@ class Circle:
             "long_name": "Area-averaged atmospheric vertical velocity",
             "units": "m s-1",
         }
-        self.circle_ds = ds.assign(dict(wvel=(ds.omega.dims, w_vel.values, wvel_attrs)))
+        self.circle_ds = ds.assign(
+            dict(wvel=(ds.omega.dims, w_vel.broadcast_like(ds.div).values, wvel_attrs))
+        )
         return self
