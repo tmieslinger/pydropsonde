@@ -1,7 +1,6 @@
 from dataclasses import dataclass
 import numpy as np
 import xarray as xr
-import tqdm
 import circle_fit as cf
 import pydropsonde.helper.physics as hp
 
@@ -182,7 +181,7 @@ class Circle:
 
         assign_dict = {}
 
-        for par in tqdm.tqdm(variables):
+        for par in variables:
             long_name = self.circle_ds[par].attrs.get("long_name")
             standard_name = self.circle_ds[par].attrs.get("standard_name")
             varnames = ["mean_" + par, "d" + par + "dx", "d" + par + "dy"]
