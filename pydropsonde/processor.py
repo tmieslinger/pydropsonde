@@ -1929,7 +1929,6 @@ class Gridded:
         Add a dictionary of circles to the Gridded object.
         """
         self.circles = circles
-        print(self.circles)
         return self
 
     def concat_circles(self, sortby=None):
@@ -1942,12 +1941,14 @@ class Gridded:
 
         for circle_id, circle in self.circles.items():
             circle_ds = circle.circle_ds
+            circle_ds = circle_ds.sortby("sonde_time")
+            circle_ds = circle_ds.reset_coords("circle_time")
 
             vars_sonde_dim = []
             vars_circle_dim = []
 
             for var in circle_ds.data_vars:
-                if {"sonde"} <= set(circle_ds[var].dims):
+                if "sonde" in circle_ds[var].dims:
                     vars_sonde_dim.append(var)
                 else:
                     vars_circle_dim.append(var)
@@ -1980,11 +1981,20 @@ class Gridded:
         concatenated_ds = xr.merge(
             [sonde_ds_filtered, circle_ds_filtered], compat="override", join="outer"
         )
+        concatenated_ds = concatenated_ds.assign(circle_id=("circle", circle_ids))
 
+        concatenated_ds = concatenated_ds.set_coords(
+            ["circle_time", "circle_lon", "circle_lat", "circle_radius"]
+        )
+        concatenated_ds = concatenated_ds.reset_coords(
+            ["aircraft_latitude", "aircraft_longitude", "aircraft_msl_altitude"]
+        )
         concatenated_ds = concatenated_ds.assign_coords(
             sondes_per_circle=("circle", count)
         )
+
         concatenated_ds.sondes_per_circle.attrs["sample_dimension"] = "sonde"
+        concatenated_sonde_ds = concatenated_ds.sortby(sortby)
 
         self._interim_l4_ds = concatenated_ds
 

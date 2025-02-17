@@ -44,7 +44,7 @@ def remove_above_alt(ds, variables, alt_dim, maxalt):
 
 
 # encode and write files
-def get_chunks(ds, var, object_dims=("sonde_id", "circle"), alt_dim="alt"):
+def get_chunks(ds, var, object_dims=("sonde", "circle"), alt_dim="alt"):
     """
     Get standard chunks for one object_dim (like sonde_id or circle) and one height dimension
     """
