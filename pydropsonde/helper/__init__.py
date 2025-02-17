@@ -168,25 +168,6 @@ def get_global_attrs_from_config(config):
     return global_attrs
 
 
-l3_vars = [
-    "u",
-    "v",
-    "ta",
-    "p",
-    "rh",
-    "lat",
-    "lon",
-    "gpsalt",
-    "alt",
-    "sonde_id",
-    "launch_time",
-    "q",
-    "iwv",
-    "w_dir",
-    "w_spd",
-]
-
-
 def get_bool(s):
     if isinstance(s, bool):
         return s
