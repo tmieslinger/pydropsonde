@@ -1931,13 +1931,10 @@ class Gridded:
         self.circles = circles
         return self
 
-    def concat_circles(self, sortby=None):
+    def concat_circles(self):
         count = []
         data = []
         circle_ids = []
-
-        if sortby is None:
-            sortby = list(hh.l4_coords.keys())[0]
 
         for circle_id, circle in self.circles.items():
             circle_ds = circle.circle_ds
@@ -1964,7 +1961,6 @@ class Gridded:
             coords="all",
             compat="override",
         )
-        concatenated_sonde_ds = concatenated_sonde_ds.sortby("sonde_time")
 
         concatenated_circle_ds = xr.concat(
             [ds[vars_circle_dim] for ds in data],
@@ -1973,7 +1969,6 @@ class Gridded:
             coords="all",
             compat="override",
         )
-        concatenated_circle_ds = concatenated_circle_ds.sortby(sortby)
 
         sonde_ds_filtered = concatenated_sonde_ds[vars_sonde_dim]
         circle_ds_filtered = concatenated_circle_ds[vars_circle_dim]
@@ -1994,7 +1989,6 @@ class Gridded:
         )
 
         concatenated_ds.sondes_per_circle.attrs["sample_dimension"] = "sonde"
-        concatenated_sonde_ds = concatenated_ds.sortby(sortby)
 
         self._interim_l4_ds = concatenated_ds
 
@@ -2175,19 +2169,22 @@ class Gridded:
         segmentation = rr.get_flight_segmentation(yaml_file)
         platform_ids = set(self.l3_ds.platform_id.values)
         flight_ids = set(self.l3_ds.flight_id.values)
-        self.segments = [
-            {
-                **s,
-                "platform_id": platform_id,
-                "flight_id": flight_id,
-            }
-            for platform_id in platform_ids
-            for flight_id in flight_ids
-            for s in segmentation.get(platform_id, {})
-            .get(flight_id, {})
-            .get("segments", [])
-            if "circle" in s["kinds"]
-        ]
+        self.segments = sorted(
+            [
+                {
+                    **s,
+                    "platform_id": platform_id,
+                    "flight_id": flight_id,
+                }
+                for platform_id in platform_ids
+                for flight_id in flight_ids
+                for s in segmentation.get(platform_id, {})
+                .get(flight_id, {})
+                .get("segments", [])
+                if "circle" in s["kinds"]
+            ],
+            key=lambda s: s["start"],
+        )
 
         return self
 
@@ -2220,7 +2217,12 @@ class Gridded:
             + f" level4 concatenation with pydropsonde {__version__} \n"
         )
         object.__setattr__(self, "history", history)
-        ds.attrs.update({"history": history})
+        ds.attrs.update(
+            {
+                "history": history,
+                "title": ds.attrs.get("title", "Dropsonde Data") + " Level 4",
+            }
+        )
 
         hx.write_ds(
             ds=ds,
