@@ -73,7 +73,7 @@ def get_target_dtype(ds, var):
     if isinstance(ds[var].values.flat[0], np.floating):
         return {"dtype": "float32"}
     if np.issubdtype(type(ds[var].values.flat[0]), np.datetime64):
-        return {"units": "nanoseconds since 2000-01-01", "dtype": "float32"}
+        return {"units": "nanoseconds since 2000-01-01", "dtype": "<i8"}
     else:
         return {"dtype": ds[var].values.dtype}
 
