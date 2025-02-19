@@ -169,18 +169,18 @@ def get_global_attrs_from_config(config):
 
 
 def get_level_specific_attrs_from_config(config):
-    try:
-        l3_attrs = dict(config.items("L3_ATTRS"))
-    except NoSectionError:
-        print("No L3 attributes in config")
-        l3_attrs = {}
-    try:
-        l2_attrs = dict(config.items("L2_ATTRS"))
-    except NoSectionError:
-        print("No L3 attributes in config")
-        l2_attrs = {}
+    """
+    get level specific attributes that should be added to each dataset from config
+    """
+    attrs = {}
+    for i in range(2, 5):
+        try:
+            attrs[f"l{i}"] = dict(config.items(f"L{i}_ATTRS"))
+        except NoSectionError:
+            print(f"No L{i} attributes in config")
+            attrs[f"l{i}"] = {}
 
-    return {"l2": l2_attrs, "l3": l3_attrs}
+    return attrs
 
 
 def get_bool(s):
