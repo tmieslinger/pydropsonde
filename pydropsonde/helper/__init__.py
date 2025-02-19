@@ -115,12 +115,18 @@ l3_coords = dict(
     aircraft_longitude={
         "long_name": "aircraft longitude at launch",
         "units": "degrees_east",
+        "source": "aircraft measurement",
     },
     aircraft_latitude={
         "long_name": "aircraft latitude at launch",
         "units": "degrees_north",
+        "source": "aircraft measurement",
     },
-    aircraft_msl_altitude={"long_name": "aircraft altitude at launch", "units": "m"},
+    aircraft_msl_altitude={
+        "long_name": "aircraft altitude at launch",
+        "units": "m",
+        "source": "aircraft measurement",
+    },
 )
 
 l4_coords = dict(
