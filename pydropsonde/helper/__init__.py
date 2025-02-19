@@ -179,7 +179,6 @@ def get_level_specific_attrs_from_config(config):
         except NoSectionError:
             print(f"No L{i} attributes in config")
             attrs[f"l{i}"] = {}
-
     return attrs
 
 

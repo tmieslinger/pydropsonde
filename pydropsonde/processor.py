@@ -1993,21 +1993,6 @@ class Gridded:
 
         return self
 
-    def get_all_attrs(self):
-        """
-        Collects all unique attributes from the sondes and stores them in the Gridded object.
-
-        Returns
-        -------
-        self : Gridded
-            Returns the Gridded object with collected attributes.
-        """
-        attrs = set()
-        for sonde in list(self.sondes.values()):
-            attrs = set(sonde.attrs) | attrs
-        self.attrs = list(attrs)
-        return self
-
     def get_l3_dir(self, l3_dir: str = None):
         """
         Determines the Level 3 directory for the Gridded object.
@@ -2202,24 +2187,35 @@ class Gridded:
         self.l4_filename = l4_filename
         return self
 
-    def write_l4(self, l4_dir: str = None, _interim_l4_ds: xr.Dataset = None):
-        if l4_dir is None:
-            l4_dir = self.l4_dir
-        ds = self._interim_l4_ds
+    def update_history_l4(self):
         history = getattr(self, "history", "")
         history = (
             history
             + datetime.now(timezone.utc).isoformat()
-            + f" level4 concatenation with pydropsonde {__version__} \n"
+            + f" level4 computation with pydropsonde {__version__} \n"
         )
-        object.__setattr__(self, "history", history)
-        ds.attrs.update(
-            {
-                "history": history,
-                "title": ds.attrs.get("title", "Dropsonde Data") + " Level 4",
-            }
-        )
+        self.history = history
+        return self
 
+    def write_l4(self, l4_dir: str = None, _interim_l4_ds: xr.Dataset = None):
+        if l4_dir is None:
+            l4_dir = self.l4_dir
+        ds = self._interim_l4_ds
+        ds.attrs.update(
+            self.global_attrs["global"],
+        )
+        ds.attrs.update(
+            self.global_attrs["l4"],
+        )
+        ds.attrs.update(
+            dict(
+                history=self.history,
+                title=self.global_attrs["l4"].get(
+                    "title",
+                    self.global_attrs.get("title", "Dropsonde Data") + " Level_4",
+                ),
+            )
+        )
         hx.write_ds(
             ds=ds,
             dir=l4_dir,

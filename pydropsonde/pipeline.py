@@ -2,7 +2,6 @@ from .helper.paths import Platform, Flight
 from .helper.__init__ import (
     path_to_flight_ids,
     path_to_l0_files,
-    get_global_attrs_from_config,
 )
 from .processor import Sonde, Gridded
 from .circles import Circle
@@ -386,8 +385,7 @@ def iterate_Circle_method_over_dict_of_Circle_objects(
 
 
 def sondes_to_gridded(sondes: dict, config: configparser.ConfigParser):
-    global_attrs = get_global_attrs_from_config(config)
-    gridded = Gridded(sondes, global_attrs=global_attrs)
+    gridded = Gridded(sondes, global_attrs=list(sondes.values())[0].global_attrs)
     return gridded
 
 
@@ -635,6 +633,7 @@ pipeline = {
         "functions": [
             "get_l4_dir",
             "get_l4_filename",
+            "update_history_l4",
             "write_l4",
         ],
         "output": "gridded",
