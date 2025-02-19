@@ -151,7 +151,7 @@ class Circle:
         a = np.stack([np.ones_like(x), x, y], axis=-1)
 
         invalid = np.isnan(u) | np.isnan(x) | np.isnan(y)
-
+        # remove values where fewer than 6 sondes are present. Depending on the application, this might be changed.
         under_constraint = np.sum(~invalid, axis=-1) < 6
         u_cal = np.where(invalid, 0, u)
         a[invalid] = 0
