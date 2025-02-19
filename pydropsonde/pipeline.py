@@ -580,7 +580,6 @@ pipeline = {
         "functions": [
             "check_aspen_version",
             "check_pydropsonde_version",
-            "check_broken",
             "add_history_to_ds",
             "add_dim_names",
             "concat_sondes",

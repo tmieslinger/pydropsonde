@@ -1706,11 +1706,6 @@ class Sonde:
             self: The instance after saving the `interim_l3_ds`.
         """
         ds = self.interim_l3_ds
-        if hasattr(self, "broken_sondes"):
-            if self.serial_id in self.broken_sondes:
-                ds.attrs.update(
-                    {"comment": self.broken_sondes[self.serial_id]["error"]}
-                )
         hx.write_ds(
             ds=ds,
             dir=self.interim_l3_dir,
@@ -1854,20 +1849,6 @@ class Gridded:
         sonde = list(self.sondes.values())[0]
         self.alt_dim = sonde.alt_dim
         self.sonde_dim = sonde.sonde_dim
-        return self
-
-    def check_broken(self):
-        """
-        Checks for broken sondes and adds them to the Gridded object if present.
-
-        Returns
-        -------
-        self : Gridded
-            Returns the Gridded object.
-        """
-        sonde = list(self.sondes.values())[0]
-        if hasattr(sonde, "broken_sondes"):
-            self.broken_sondes = sonde.broken_sondes
         return self
 
     def concat_sondes(self, sortby=None, coords=None):
@@ -2024,9 +2005,6 @@ class Gridded:
                 "title": ds.attrs.get("title", "Dropsonde Data") + " Level 3",
             }
         )
-
-        if hasattr(self, "broken_sondes"):
-            ds.attrs.update({"broken_sondes": list(self.broken_sondes.keys())})
 
         hx.write_ds(
             ds=self.concat_sonde_ds,
