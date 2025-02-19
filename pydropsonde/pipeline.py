@@ -601,7 +601,7 @@ pipeline = {
     "prepare_circle_dataset": {
         "intake": "gridded",
         "apply": iterate_Circle_method_over_dict_of_Circle_objects,
-        "functions": ["drop_m_N_vars", "get_xy_coords_for_circles"],
+        "functions": ["get_xy_coords_for_circles"],
         "output": "gridded",
         "comment": "prepare circle dataset for calculation",
     },
@@ -615,6 +615,7 @@ pipeline = {
             "add_vorticity",
             "add_omega",
             "add_wvel",
+            "drop_vars",
         ],
         "output": "gridded",
         "comment": "calculate circle products",

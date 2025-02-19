@@ -25,10 +25,17 @@ class Circle:
     alt_dim: str
     sonde_dim: str
 
-    def drop_m_N_vars(self):
+    def drop_vars(self, variables=None):
         """
         drop m and N variables from level 3 from circle dataset
         """
+        if variables is None:
+            variables = [
+                "bin_average_time",
+                "alt_near_gpsalt",
+                "alt_source",
+                "alt_near_gpsalt_max_diff",
+            ]
         ds = self.circle_ds
         ds = (
             ds.drop_vars(
@@ -42,7 +49,26 @@ class Circle:
             .drop_vars(
                 ["gps_m_qc", "gps_N_qc", "gpspos_N_qc", "gpspos_m_qc"], errors="ignore"
             )
+            .drop_vars(
+                [f"{var}_qc" for var in ["u", "v", "ta", "p", "rh"]],
+                errors="ignore",
+            )
+            .drop_vars(
+                variables,
+                errors="ignore",
+            )
         )
+        for qc_details in [
+            "low_physics_sfc",
+            "near_surface_count",
+            "profile_extent_max",
+            "profile_sparsity_fraction",
+        ]:
+            ds = ds.drop_vars(
+                [f"{var}_{qc_details}" for var in ["u", "v", "ta", "p", "rh"]],
+                errors="ignore",
+            )
+
         self.circle_ds = ds
 
         return self
