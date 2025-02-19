@@ -806,6 +806,16 @@ class Sonde:
         self.interim_l2_ds = ds
         return self
 
+    def update_history_l2(self):
+        history = getattr(self, "history", "")
+        history = (
+            history
+            + datetime.now(timezone.utc).isoformat()
+            + f" quality control with pydropsonde {__version__} \n"
+        )
+        self.history = history
+        return self
+
     def add_l2_attributes_to_interim_l2_ds(self):
         """
         Adds flight, sonde and global attributes to interim_l2_ds.
@@ -832,17 +842,7 @@ class Sonde:
             ds = ds.assign_attrs(self.flight_attrs)
         if hasattr(self, "sonde_attrs"):
             ds = ds.assign_attrs(self.sonde_attrs)
-        if hasattr(self, "global_attrs"):
-            ds = ds.assign_attrs(self.global_attrs)
 
-        history = getattr(self, "history", "")
-        history = (
-            history
-            + datetime.now(timezone.utc).isoformat()
-            + f" quality control with pydropsonde {__version__} \n"
-        )
-        self.history = history
-        ds = ds.assign_attrs({"history": history})
         self.interim_l2_ds = ds
 
         return self
@@ -939,9 +939,19 @@ class Sonde:
                 )
 
         ds.attrs.update(
+            self.global_attrs["global"],
+        )
+        ds.attrs.update(
+            self.global_attrs["l2"],
+        )
+        ds.attrs.update(
             dict(
-                title=ds.attrs.get("title", "Dropsonde Data")
-                + f" Level 2, Sonde {self.serial_id}",
+                history=self.history,
+                title=self.global_attrs["l2"].get(
+                    "title",
+                    self.global_attrs.get("title", "Dropsonde Data") + " Level_2",
+                )
+                + f", {self.serial_id}",
             )
         )
         hx.write_ds(
@@ -1679,16 +1689,10 @@ class Sonde:
 
         return self
 
-    def add_globals_l3(self):
+    def update_history_l3(self):
         """
-        Prepare the interim Level 3 dataset with global attributes and history.
-
-        Returns:
-            self: The instance with updated `interim_l3_ds` including global attributes and history.
+        Update history for Level 3
         """
-        ds = self.interim_l3_ds
-        if hasattr(self, "global_attrs"):
-            ds = ds.assign_attrs(self.global_attrs)
         history = getattr(self, "history", "")
         history = (
             history
@@ -1696,8 +1700,6 @@ class Sonde:
             + f" Level 3 processing with pydropsonde {__version__} \n"
         )
         self.history = history
-        ds = ds.assign_attrs({"history": history})
-        self.interim_l3_ds = ds
         return self
 
     def save_interim_l3(self):
@@ -1708,6 +1710,22 @@ class Sonde:
             self: The instance after saving the `interim_l3_ds`.
         """
         ds = self.interim_l3_ds
+
+        ds.attrs.update(
+            self.global_attrs["global"],
+        )
+        ds.attrs.update(
+            self.global_attrs["l3"],
+        )
+        ds.attrs.update(
+            dict(
+                history=self.history,
+                title=self.global_attrs["l3"].get(
+                    "title",
+                    self.global_attrs.get("title", "Dropsonde Data") + " Level_3",
+                ),
+            )
+        )
         hx.write_ds(
             ds=ds,
             dir=self.interim_l3_dir,
@@ -1815,7 +1833,7 @@ class Gridded:
             )
         return self
 
-    def add_history_to_ds(self):
+    def add_history_to_gridded(self):
         """
         Adds history information to the dataset by processing the history attribute of the first sonde.
 
@@ -1902,8 +1920,6 @@ class Gridded:
                 combine_attrs="drop_conflicts",
             ).sortby(sortby)
 
-        if hasattr(self, "global_attrs"):
-            ds = ds.assign_attrs(self.global_attrs)
         self.concat_sonde_ds = ds
         return self
 
@@ -2047,6 +2063,16 @@ class Gridded:
 
         return self
 
+    def update_history_concat_l3(self):
+        history = getattr(self, "history", "")
+        history = (
+            history
+            + datetime.now(timezone.utc).isoformat()
+            + f" level3 concatenation with pydropsonde {__version__} \n"
+        )
+        self.history = history
+        return self
+
     def write_l3(self, l3_dir: str = None):
         """
         Writes the L3 file to the specified directory.
@@ -2065,20 +2091,10 @@ class Gridded:
         if l3_dir is None:
             l3_dir = self.l3_dir
         ds = self.concat_sonde_ds
-        history = getattr(self, "history", "")
-        history = (
-            history
-            + datetime.now(timezone.utc).isoformat()
-            + f" level3 concatenation with pydropsonde {__version__} \n"
-        )
-        self.history = history
-        ds.attrs.update(
-            {
-                "history": history,
-                "title": ds.attrs.get("title", "Dropsonde Data") + " Level 3",
-            }
-        )
 
+        ds.attrs.update(
+            history=self.history,
+        )
         hx.write_ds(
             ds=self.concat_sonde_ds,
             dir=l3_dir,

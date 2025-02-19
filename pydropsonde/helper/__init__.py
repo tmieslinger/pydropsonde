@@ -165,7 +165,22 @@ def get_global_attrs_from_config(config):
         )
     )
 
-    return global_attrs
+    return {"global": global_attrs}
+
+
+def get_level_specific_attrs_from_config(config):
+    try:
+        l3_attrs = dict(config.items("L3_ATTRS"))
+    except NoSectionError:
+        print("No L3 attributes in config")
+        l3_attrs = {}
+    try:
+        l2_attrs = dict(config.items("L2_ATTRS"))
+    except NoSectionError:
+        print("No L3 attributes in config")
+        l2_attrs = {}
+
+    return {"l2": l2_attrs, "l3": l3_attrs}
 
 
 def get_bool(s):

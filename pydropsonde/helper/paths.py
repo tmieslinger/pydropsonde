@@ -12,6 +12,7 @@ from pydropsonde.helper import (
     path_to_flight_ids,
     path_to_l0_files,
     get_global_attrs_from_config,
+    get_level_specific_attrs_from_config,
 )
 
 # create logger
@@ -193,8 +194,9 @@ class Flight:
             )
 
             global_attrs = get_global_attrs_from_config(config)
-
+            global_attrs.update(get_level_specific_attrs_from_config(config))
             Sondes[sonde_id].add_global_attrs(global_attrs)
+
             broken_file = config.get("OPTIONAL", "broken_sonde_file", fallback=None)
             if broken_file is not None:
                 with open(broken_file, "r") as file:
