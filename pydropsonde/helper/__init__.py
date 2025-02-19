@@ -383,7 +383,7 @@ def calc_theta_from_T(ds):
     except AttributeError:
         theta_attrs = dict(
             standard_name="air_potential_temperature",
-            long_name="potential temperature",
+            long_name="dry potential temperature",
             units="kelvin",
         )
     theta_attrs.update(dict(method="calculated from measured ta and p"))
