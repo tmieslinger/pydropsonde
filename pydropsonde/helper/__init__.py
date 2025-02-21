@@ -165,7 +165,21 @@ def get_global_attrs_from_config(config):
         )
     )
 
-    return global_attrs
+    return {"global": global_attrs}
+
+
+def get_level_specific_attrs_from_config(config):
+    """
+    get level specific attributes that should be added to each dataset from config
+    """
+    attrs = {}
+    for i in range(2, 5):
+        try:
+            attrs[f"l{i}"] = dict(config.items(f"L{i}_ATTRS"))
+        except NoSectionError:
+            print(f"No L{i} attributes in config")
+            attrs[f"l{i}"] = {}
+    return attrs
 
 
 def get_bool(s):

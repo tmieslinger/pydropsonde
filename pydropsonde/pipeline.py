@@ -2,7 +2,6 @@ from .helper.paths import Platform, Flight
 from .helper.__init__ import (
     path_to_flight_ids,
     path_to_l0_files,
-    get_global_attrs_from_config,
 )
 from .processor import Sonde, Gridded
 from .circles import Circle
@@ -386,8 +385,7 @@ def iterate_Circle_method_over_dict_of_Circle_objects(
 
 
 def sondes_to_gridded(sondes: dict, config: configparser.ConfigParser):
-    global_attrs = get_global_attrs_from_config(config)
-    gridded = Gridded(sondes, global_attrs=global_attrs)
+    gridded = Gridded(sondes, global_attrs=list(sondes.values())[0].global_attrs)
     return gridded
 
 
@@ -530,6 +528,7 @@ pipeline = {
             "add_flight_id_variable",
             "add_qc_to_l2",
             "get_l2_filename",
+            "update_history_l2",
             "write_l2",
         ],
         "output": "sondes",
@@ -556,7 +555,7 @@ pipeline = {
             "add_qc_to_interim_l3",
             "add_iwv",
             "add_Nm_to_vars",
-            "add_globals_l3",
+            "update_history_l3",
             "add_expected_coords",
             "save_interim_l3",
         ],
@@ -575,11 +574,12 @@ pipeline = {
         "functions": [
             "check_aspen_version",
             "check_pydropsonde_version",
-            "add_history_to_ds",
+            "add_history_to_gridded",
             "add_dim_names",
             "concat_sondes",
             "get_l3_dir",
             "get_l3_filename",
+            "update_history_concat_l3",
             "write_l3",
         ],
         "output": "gridded",
@@ -633,6 +633,7 @@ pipeline = {
         "functions": [
             "get_l4_dir",
             "get_l4_filename",
+            "update_history_l4",
             "write_l4",
         ],
         "output": "gridded",
