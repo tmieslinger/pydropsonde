@@ -1710,7 +1710,7 @@ class Sonde:
             self: The instance after saving the `interim_l3_ds`.
         """
         ds = self.interim_l3_ds
-
+        ds.attrs = {}
         ds.attrs.update(
             self.global_attrs["global"],
         )
@@ -2201,6 +2201,7 @@ class Gridded:
         if l4_dir is None:
             l4_dir = self.l4_dir
         ds = self._interim_l4_ds
+        ds.attrs = {}
         ds.attrs.update(
             self.global_attrs["global"],
         )
