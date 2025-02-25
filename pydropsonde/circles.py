@@ -324,14 +324,14 @@ class Circle:
         ds = self.circle_ds
         assert ds.p.attrs["units"] == "Pa"
         assert ds.ta.attrs["units"] == "K"
-        density = hp.density(
+        density = hp.density_from_q(
             ds.p,
             ds.ta,
-            hp.q2mr(ds.q),
+            ds.q,
         )
         density_attrs = {
             "standard_name": "air_density",
-            "long_name": "Air density",
+            "long_name": "Air density (moist)",
             "units": "kg m-3",
         }
         self.circle_ds = ds.assign(
