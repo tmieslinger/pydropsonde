@@ -1058,6 +1058,26 @@ class Sonde:
 
         return self
 
+    def remove_unphysical(self):
+        """
+        remove sondes that did not pass the sfc physics qc
+        """
+        variables = ["rh", "p", "ta"]
+        ds = self.interim_l3_ds
+        for var in variables:
+            if ds[f"{var}_qc"].values == 8:
+                ds = ds.assign(
+                    {
+                        var: (
+                            ds[var].dims,
+                            ds[var].where(np.isnan(ds[var])).values,
+                            ds[var].attrs,
+                        )
+                    }
+                )
+        self.interim_l3_ds = ds
+        return self
+
     def add_q_and_theta_to_l2_ds(self):
         """
         Adds potential temperature and specific humidity to the L2 dataset.
