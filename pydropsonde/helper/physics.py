@@ -34,7 +34,7 @@ def mr2q(mr):
     return mr / (1 + mr)
 
 
-def density(p, T, mr, eps=None):
+def density_from_mr(p, T, mr, eps=None):
     """
     returns density for given pressure, temperature and R
     """
@@ -42,6 +42,12 @@ def density(p, T, mr, eps=None):
     if eps is None:
         eps = constants.eps1
     return eps * p * (1 + mr) / (Rd * T * (mr + eps))  # water vapor density
+
+
+def density_from_q(p, T, q):
+    Rd = constants.dry_air_gas_constant
+    Rv = constants.water_vapor_gas_constant
+    return p / ((Rd + (Rv - Rd) * q) * T)
 
 
 def theta2ta(theta, P, qv=0.0, ql=0.0, qi=0.0):
@@ -91,13 +97,12 @@ def integrate_water_vapor(p, q, T=None, z=None, axis=0):
     if T is None and z is None:
         # Calculate IWV assuming hydrostatic equilibrium.
         g = constants.gravity_earth
-        return -integrate_column(q, p, axis=axis) / g
+        return integrate_column(q, p, axis=axis) / g
     elif T is None or z is None:
         raise ValueError(
             "Pass both `T` and `z` for non-hydrostatic calculation of the IWV."
         )
     else:
         # Integrate the water vapor mass density for non-hydrostatic cases.
-        rho = density(p, T, constants.Rv)  # water vapor density
-        vmr = q2vmr(q)
-        return integrate_column(vmr * rho, z, axis=axis)
+        rho = density_from_q(p, T, q)  # water vapor density
+        return integrate_column(q * rho, z, axis=axis)
