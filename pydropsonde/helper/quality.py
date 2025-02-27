@@ -291,7 +291,7 @@ class QualityControl:
             self.qc_flags["alt_near_gpsalt"] = False
         self.qc_details["alt_near_gpsalt_max_diff"] = max_diff.values
 
-    def low_physics(
+    def sfc_physics(
         self,
         min_vals={"rh": 0.3, "p": 100500, "ta": 293.15},
         max_vals={"rh": 1, "p": 102000, "ta": 310},
@@ -314,14 +314,14 @@ class QualityControl:
         ds_check = self.qc_ds[["rh", "ta", "p"]].sortby("time", ascending=False)
         for var in ["p", "rh", "ta"]:
             if ds_check[var].dropna(dim="time").sizes["time"] == 0:
-                self.qc_flags[f"{var}_low_physics"] = False
-                self.qc_details[f"{var}_low_physics_sfc"] = np.nan
+                self.qc_flags[f"{var}_sfc_physics"] = False
+                self.qc_details[f"{var}_sfc_physics_val"] = np.nan
             else:
                 sfc_var = ds_check[var].dropna(dim="time").values[0]
-                self.qc_flags[f"{var}_low_physics"] = (sfc_var > min_vals[var]) and (
+                self.qc_flags[f"{var}_sfc_physics"] = (sfc_var > min_vals[var]) and (
                     sfc_var < max_vals[var]
                 )
-                self.qc_details[f"{var}_low_physics_sfc"] = sfc_var
+                self.qc_details[f"{var}_sfc_physics_val"] = sfc_var
 
     def check_qc(self, used_flags=None, check_ugly=True):
         """
@@ -451,6 +451,7 @@ class QualityControl:
             or (qc_name.endswith("min"))
             or (qc_name.endswith("max"))
             or (qc_name.endswith("sfc"))
+            or (qc_name.endswith("val"))
         ):
             return var_unit
         elif (
@@ -623,9 +624,9 @@ class QualityControl:
         if all(flags.values()):
             qc_val = 0
         elif any(flags.values()):
-            flags.pop("p_low_physics", None)
-            flags.pop("rh_low_physics", None)
-            flags.pop("ta_low_physics", None)
+            flags.pop("p_sfc_physics", None)
+            flags.pop("rh_sfc_physics", None)
+            flags.pop("ta_sfc_physics", None)
             if all(flags.values()):
                 qc_val = 1
             else:
