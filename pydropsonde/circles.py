@@ -186,7 +186,7 @@ class Circle:
         )
         return self
 
-    def interpolate_na_sondes(self, method="cubic", max_gap=1500, thresh=4):
+    def interpolate_na_sondes(self, method="akima", max_gap=1500, thresh=4):
         if method is not None:
             ds = self.circle_ds.swap_dims({self.sonde_dim: "sonde_id"})
             alt_dim = self.alt_dim
@@ -201,8 +201,6 @@ class Circle:
                 interp = no_nan.interpolate_na(
                     dim=alt_dim,
                     method=method,
-                    bounds_error=False,
-                    fill_value=np.nan,
                     max_gap=int(max_gap),
                 )
                 ds = ds.assign(
