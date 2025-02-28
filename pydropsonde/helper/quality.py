@@ -291,17 +291,13 @@ class QualityControl:
             self.qc_flags["alt_near_gpsalt"] = False
         self.qc_details["alt_near_gpsalt_max_diff"] = max_diff.values
 
-    def low_physics(
+    def sfc_physics(
         self,
-        rh_min=0.3,
-        ta_min=293.15,
-        p_min=100500,
-        p_max=102000,
-        alt_dim="gpsalt",
+        min_vals={"rh": 0.3, "p": 100500, "ta": 293.15},
+        max_vals={"rh": 1, "p": 102000, "ta": 310},
     ):
         """
-        Checks that the temperature and relative humidity in the lowest 100m in a dataset
-        are above a certain value
+        Checks that temperature, rh and p at the surface are within a certain range
 
 
         Parameters
@@ -315,24 +311,17 @@ class QualityControl:
         -------
         None
         """
-        ds_check = self.qc_ds.sortby("time", ascending=False).dropna(dim="time")
-        if ds_check.sizes["time"] == 0:
-            self.qc_flags["rh_low_physics"] = False
-            self.qc_flags["ta_low_physics"] = False
-            self.qc_flags["p_low_physics"] = False
-            self.qc_details["rh_low_physics_sfc"] = np.nan
-            self.qc_details["ta_low_physics_sfc"] = np.nan
-            self.qc_details["p_low_physics_sfc"] = np.nan
-        else:
-            sfc_p = ds_check.p.values[0]
-            self.qc_flags["ta_low_physics"] = ds_check.ta.values[0] > float(ta_min)
-            self.qc_flags["rh_low_physics"] = ds_check.rh.values[0] > float(rh_min)
-            self.qc_flags["p_low_physics"] = (sfc_p > float(p_min)) and (
-                sfc_p < float(p_max)
-            )
-            self.qc_details["rh_low_physics_sfc"] = ds_check.rh.values[0]
-            self.qc_details["ta_low_physics_sfc"] = ds_check.ta.values[0]
-            self.qc_details["p_low_physics_sfc"] = sfc_p
+        ds_check = self.qc_ds[["rh", "ta", "p"]].sortby("time", ascending=False)
+        for var in ["p", "rh", "ta"]:
+            if ds_check[var].dropna(dim="time").sizes["time"] == 0:
+                self.qc_flags[f"{var}_sfc_physics"] = False
+                self.qc_details[f"{var}_sfc_physics_val"] = np.nan
+            else:
+                sfc_var = ds_check[var].dropna(dim="time").values[0]
+                self.qc_flags[f"{var}_sfc_physics"] = (sfc_var > min_vals[var]) and (
+                    sfc_var < max_vals[var]
+                )
+                self.qc_details[f"{var}_sfc_physics_val"] = sfc_var
 
     def check_qc(self, used_flags=None, check_ugly=True):
         """
@@ -462,6 +451,7 @@ class QualityControl:
             or (qc_name.endswith("min"))
             or (qc_name.endswith("max"))
             or (qc_name.endswith("sfc"))
+            or (qc_name.endswith("val"))
         ):
             return var_unit
         elif (
@@ -634,9 +624,9 @@ class QualityControl:
         if all(flags.values()):
             qc_val = 0
         elif any(flags.values()):
-            flags.pop("p_low_physics", None)
-            flags.pop("rh_low_physics", None)
-            flags.pop("ta_low_physics", None)
+            flags.pop("p_sfc_physics", None)
+            flags.pop("rh_sfc_physics", None)
+            flags.pop("ta_sfc_physics", None)
             if all(flags.values()):
                 qc_val = 1
             else:

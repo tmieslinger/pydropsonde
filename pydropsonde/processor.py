@@ -521,7 +521,7 @@ class Sonde:
                 "profile_extent",
                 "near_surface_coverage",
                 "alt_near_gpsalt",
-                "low_physics",
+                "sfc_physics",
             ]
         elif isinstance(run_qc, str):
             run_qc = run_qc.split(",")
@@ -1058,6 +1058,26 @@ class Sonde:
 
         return self
 
+    def remove_unphysical(self):
+        """
+        remove sondes that did not pass the sfc physics qc
+        """
+        variables = ["rh", "p", "ta"]
+        ds = self.interim_l3_ds
+        for var in variables:
+            if ds[f"{var}_qc"].values == 8:
+                ds = ds.assign(
+                    {
+                        var: (
+                            ds[var].dims,
+                            ds[var].where(np.isnan(ds[var])).values,
+                            ds[var].attrs,
+                        )
+                    }
+                )
+        self.interim_l3_ds = ds
+        return self
+
     def add_q_and_theta_to_l2_ds(self):
         """
         Adds potential temperature and specific humidity to the L2 dataset.
@@ -1189,14 +1209,14 @@ class Sonde:
         alt_dim = self.alt_dim
         ds = self.interim_l2_ds
         alt_attrs = ds[alt_dim].attrs
-        if (not self.qc.qc_flags["p_low_physics"]) and (np.all(np.isnan(ds["gpsalt"]))):
+        if (not self.qc.qc_flags["p_sfc_physics"]) and (np.all(np.isnan(ds["gpsalt"]))):
             print(
                 f"No gpsalt values and no reliable alt values.  Sonde {self.serial_id} from {self.flight_id} is dropped"
             )
             return None
         elif alt_dim == "alt":
             self.qc.qc_flags.update({"altitude_source": "alt"})
-            if not self.qc.qc_flags["p_low_physics"]:
+            if not self.qc.qc_flags["p_sfc_physics"]:
                 for var in ["rh", "ta", "p"]:
                     self.qc.qc_flags[f"{var}_near_surface"] = False
                     self.qc.qc_details[f"{var}_near_surface_count"] = np.nan
@@ -1208,11 +1228,11 @@ class Sonde:
         elif alt_dim == "gpsalt":
             self.qc.qc_flags.update({"altitude_source": "gpsalt"})
             if (not self.qc.qc_flags["u_near_surface"]) and (
-                self.qc.qc_flags["p_low_physics"]
+                self.qc.qc_flags["p_sfc_physics"]
             ):
                 ds = ds.assign({alt_dim: ds["alt"]})
                 self.qc.qc_flags.update({"altitude_source": "alt"})
-            elif not self.qc.qc_flags["p_low_physics"]:
+            elif not self.qc.qc_flags["p_sfc_physics"]:
                 for var in ["rh", "ta", "p"]:
                     self.qc.qc_flags[f"{var}_near_surface"] = False
                     self.qc.qc_details[f"{var}_near_surface_count"] = np.nan

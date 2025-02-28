@@ -58,7 +58,7 @@ class Circle:
             )
         )
         for qc_details in [
-            "low_physics_sfc",
+            "sfc_physics_val",
             "near_surface_count",
             "profile_extent_max",
             "profile_sparsity_fraction",

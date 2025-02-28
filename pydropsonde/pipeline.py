@@ -543,6 +543,7 @@ pipeline = {
             "add_l2_ds",
             "create_interim_l3",
             "remove_above_aircraft",
+            "remove_unphysical",
             "add_q_and_theta_to_l2_ds",
             "remove_non_mono_incr_alt",
             "swap_alt_dimension",
